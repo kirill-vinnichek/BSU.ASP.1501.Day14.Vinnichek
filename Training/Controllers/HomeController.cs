@@ -12,6 +12,16 @@ namespace Training.Controllers
     {
         private AppDbContext dbContext = new AppDbContext();
         private int pageSize = 5;
+        private List<SelectListItem> list = new List<SelectListItem>()
+        {new SelectListItem
+            {
+                Value = "-1",
+                Text = "Выберите университет"
+            },
+           new SelectListItem() { Value = "BSUIR", Text = "BSUIR" },
+        new SelectListItem() { Value = "BSU", Text = "BSU" },
+           new SelectListItem() { Value = "BSEU", Text = "BSEU" }
+        };
         // GET: Home
         public ActionResult Index(int page = 1)
         {
@@ -37,25 +47,16 @@ namespace Training.Controllers
                 return HttpNotFound("Training is not found");
             }
             ViewBag.Training = training;
-            var list = new List<SelectListItem>();
-            list.Add(new SelectListItem
-            {
-                Value = "-1",
-                Text = "Выберите университет"
-            });
-            list.Add(new SelectListItem() { Value = "BSUIR", Text = "BSUIR" });
-            list.Add(new SelectListItem() { Value = "BSU", Text = "BSU" });
-            list.Add(new SelectListItem() { Value = "BSEU", Text = "BSEU" });
             ViewBag.UniList = list;
             return View();
         }
         [HttpPost]
         public ActionResult Training(Student student)
         {
+            int id = (int)TempData["id"];
+            var tr = dbContext.Trainings.FirstOrDefault(t => t.Id == id);
             if (ModelState.IsValid)
             {
-                int id = (int)TempData["id"];
-                var tr = dbContext.Trainings.FirstOrDefault(t => t.Id == id);
                 var st = dbContext.Students.FirstOrDefault(s => s.FirstName == student.FirstName
                 && s.LastName == student.LastName && s.University == student.University);
                 if (st != null)
@@ -70,16 +71,18 @@ namespace Training.Controllers
                 }
                 dbContext.SaveChanges();
                 @TempData["Congrats"] = "Вы успешно зарегистрировались";
-                return RedirectToAction("Training", new { id = id });                          
+                return RedirectToAction("Training", new { id = id });
             }
+            ViewBag.Training = tr;
+            ViewBag.UniList = list;
             return View(student);
         }
-       
+
         public ActionResult RegStudents(int? id)
         {
             var students = dbContext.Trainings.FirstOrDefault(t => t.Id == id)?.Students?.ToList();
             if (students == null)
-                students = new List<Student>();  
+                students = new List<Student>();
             return PartialView("_students", students);
         }
 
