@@ -1,0 +1,59 @@
+﻿@model Training.Models.Student
+
+@{
+    ViewBag.Title = "Training";
+    TempData["id"] = @ViewBag.Training.Id;
+}
+<br />
+<br />
+<h2>@ViewBag.Training.Title</h2>
+<h3 class="text-success">@TempData["Congrats"]</h3>
+<div id="ajax">
+    @Ajax.ActionLink("Список зарегестрированных студентов", "RegStudents", new { id = @ViewBag.Training.Id }, new AjaxOptions { UpdateTargetId = "ajax" })
+</div>
+
+
+@using (Html.BeginForm("Training", "Home", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <div class="form-group-sm">
+        @{    List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem() { Value = "-1", Text = "Выберите курс" });
+            for (int i = 1; i < 6; i++)
+            {
+                list.Add(new SelectListItem() { Value = i.ToString(), Text = i.ToString() });
+            }
+        }
+
+        @Html.DropDownListFor(m => m.Course, list)
+        @Html.ValidationMessageFor(m => m.Course)
+    </div>
+    <div class="form-group-sm">        
+        @Html.DropDownListFor(m => m.University, (IEnumerable<SelectListItem>)ViewBag.UniList)
+        @Html.ValidationMessageFor(m => m.University)
+    </div>
+    <div class="form-group-sm">
+        @Html.LabelFor(m => m.FirstName)
+        @Html.EditorFor(m => m.FirstName, new { @class = "edit" })
+        @Html.ValidationMessageFor(m => m.FirstName)
+    </div>
+
+    <div class="form-group-sm">
+        @Html.LabelFor(m => m.LastName)
+        @Html.EditorFor(m => m.LastName, new { @class = "edit" })
+        @Html.ValidationMessageFor(m => m.LastName)
+    </div>
+
+        <div class="form-group-sm">
+            @Html.LabelFor(m => m.Email)
+            @Html.EditorFor(m => m.Email, new { @class = "edit" })
+            @Html.ValidationMessageFor(m => m.Email)
+        </div>
+        <input type="submit" class="btn btn-primary" value="Зарегестрироваться" />
+            }
+
+
+@section Scripts
+    {
+    @Scripts.Render("~/bundles/jquery-ajax")
+}
+

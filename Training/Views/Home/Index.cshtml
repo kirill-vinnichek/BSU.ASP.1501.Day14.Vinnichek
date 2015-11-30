@@ -1,0 +1,31 @@
+﻿@model Training.ViewModels.IndexViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+<br />
+<br />
+        <h2>Index</h2>
+
+<div class="col-md-6 col-md-offset-1">
+    <table class="table">
+        <tr>
+            <td class="text-info">Название</td>
+            <td class="text-danger">Описание</td>
+        </tr>
+        @foreach (var t in Model.Trainings)
+        {
+            <tr>
+                <td><a href=@Url.Action("Training", new { id = t.Id })>@t.Title</a></td>
+            <td>@t.Description</td>
+        </tr>
+        }
+    </table>
+    <br />
+    @if (Model.PageInfo.TotalPages != 1)
+    {
+    <div class="btn-group">
+        @Html.PageLinks(Model.PageInfo, x => Url.Action("Index", new { page = x }))
+    </div>
+    }
+</div>
